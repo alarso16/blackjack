@@ -4,8 +4,8 @@ from hand import Hand
 class Player():
     def __init__(self, name, dealer=False, buy_in=100):
         self.name = name
-        self.hand = None
-        self.split_hand = None
+        self.hand = Hand()
+        self.split_hand = Hand()
         self.dealer = dealer
         self.cash = buy_in
         self.has_blackjack = False
@@ -14,7 +14,42 @@ class Player():
         self.hand = hand
 
     def take_turn(self, deck):
-        pass
+        if self.dealer:
+            while self.hand.sum() <= 17:
+                self.hand.add(deck.deal())
+            if self.hand.sum() > 21:
+                print('Bust!')
+
+        else:
+            return self._take_player_turn(deck)
+
+        return 0
+
+
+    def _take_player_turn(self,deck):
+        action = 'h'
+        main_done = False
+
+        # Obviously wont hit on a blackjack
+        if self.has_blackjack:
+            return
+        
+        print(self)
+
+        # offer split
+        if (self.split_hand == None) and self.hand.can_split():
+            action = input('Would you like to split your hand? (y/n): ').lower()
+            if (action != 'y') and (action != 'n'):
+                print("You're obviously too stupid to split your hand if you can't enter the right character.")
+                print("Maybe you'll get it right next time...")
+                print()
+            elif action == 'y':
+                self.split_hand = self.hand.split()
+                self.cash -= self.split_hand.bet
+                self.cash -= self.split_hand.play_hand(deck)
+
+        self.cash -= self.hand.play_hand(deck)
+
 
     def payout(self, dealer):
         if self.has_blackjack: # already paid out
@@ -37,7 +72,7 @@ class Player():
         string = self.name + ": $" + str(self.cash) + "\n"
         string += "\t" + str(self.hand)
         if self.split_hand != None:
-            string += "\n\t" + str(self.hand)
+            string += "\n\t" + str(self.split_hand)
         return string
 
 if __name__ == "__main__":

@@ -28,5 +28,8 @@ class Card():
     def __add__(self, right) -> int:
         return self.value() + right.value()
 
+    def __eq__(self, right) -> bool:
+        return self.rank == right.rank
+
 if __name__ == "__main__":
     print(Card('3', 'Spades'))

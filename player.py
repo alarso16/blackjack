@@ -53,25 +53,39 @@ class Player():
 
     def payout(self, dealer):
         if self.has_blackjack: # already paid out
+            print(f"{self.name}: Blackjack!")
             return
         
-        if self.hand.sum() < 21:
-            if self.hand.sum() >= dealer.hand.sum():
+        if self.hand.sum() <= 21:
+            print(f"{self.name}: {self.hand.sum()}")
+            if dealer.hand.sum() <= 21:
+                if self.hand.sum() >= dealer.hand.sum():
+                    self.cash += self.hand.bet # make back money in tie
+                if self.hand.sum() > dealer.hand.sum():
+                    self.cash += self.hand.bet # make money on win
+            else:
+                self.cash += 2 * self.hand.bet
+        else:
+            print(f"{self.name}: {self.hand.sum()} - Bust!")
+
+        if (self.split_hand.sum() != 0) and (self.split_hand.sum() <= 21):
+            print(f"{self.name}: {self.split_hand.sum()}")
+            if self.split_hand.sum() >= dealer.hand.sum():
                 self.cash += self.hand.bet # make back money in tie
-            if self.hand.sum() > dealer.hand.sum():
-                self.cash += self.hand.bet # make money on win
+            if self.split_hand.sum() > dealer.hand.sum():
+                self.cash += self.split_hand.bet # make money on win
+        elif (self.split_hand.sum() > 21):
+            print(f"{self.name}: {self.split_hand.sum()} - Bust!")
 
     def cleanup(self, discard):
         self.hand.discard(discard)
-        if self.split_hand != None:
-            self.split_hand.discard(discard)
-        self.split_hand = None
+        self.split_hand.discard(discard)
         self.has_blackjack = False
 
     def __str__(self) -> str:
         string = self.name + ": $" + str(self.cash) + "\n"
         string += "\t" + str(self.hand)
-        if self.split_hand != None:
+        if len(self.split_hand) != 0:
             string += "\n\t" + str(self.split_hand)
         return string
 

@@ -20,6 +20,7 @@ class Game:
             self.deal_cards() # gets bets and deals initially
 
             print(self)
+            print()
             
             # Check to see if insurance bets should be made
             if self.dealer.hand.get_top().is_ace():
@@ -38,11 +39,11 @@ class Game:
                     print(f"Dealer: {self.dealer.hand.get_top()}")
                     self.players[i].take_turn(self.deck)
 
-            # Let dealer take turn
-            self.dealer.take_turn(self.deck)
+                # Let dealer take turn
+                self.dealer.take_turn(self.deck)
 
-            # Compare sums and payout
-            self.payout()
+                # Compare sums and payout
+                self.payout()
 
             # Clean up cards and prepare for next round
             self.cleanup()
@@ -114,6 +115,11 @@ class Game:
                     self.players[i].cash += 2.5 * self.players[i].hand.bet
 
     def payout(self):
+        if self.dealer.hand.sum() > 21:
+            print(f"Dealer: {self.dealer.hand.sum()} - Bust!")
+        else:
+            print(f"Dealer: {self.dealer.hand.sum()}")
+        
         for i in range(len(self.players)):
             self.players[i].payout(self.dealer)
 
@@ -129,8 +135,8 @@ class Game:
                 print(f"{self.players[i].name} does not have enough money to continue.")
                 self.players.pop(i)
             else:
-                answer = input(f"{self.players[i].name}: Enter 'n' if you wish to quit.\n").lower()
-                if answer == 'n':
+                answer = input(f"{self.players[i].name}: Enter 'q' if you wish to quit.\n").lower()
+                if answer == 'q':
                     self.players.pop(i)
                 else:
                     i += 1
@@ -142,6 +148,6 @@ class Game:
     def __str__(self) -> str:
         string = f"Dealer: {self.dealer.hand.get_top()}\n"
         for player in self.players:
-            string += str(player) + '\n'
+            string += str(player) + "\n"
         string += f"{len(self.deck)} cards remaining in deck."
         return string

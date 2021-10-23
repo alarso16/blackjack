@@ -30,6 +30,8 @@ class Deck:
         self.deck[len(self.deck):] = [card for card in discard.deck]
         discard.deck.clear()
 
+        print("\nShuffling\n")
+
         random.shuffle(self.deck)
 
     def isempty(self) -> bool:
